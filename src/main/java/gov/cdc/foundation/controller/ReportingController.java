@@ -242,30 +242,30 @@ public class ReportingController {
 			// Define the list of required scopes
 			Set<String> requiredScopes = new HashSet<>();
 			Set<String> extraScopes = new HashSet<>();
-			requiredScopes.add("object");
-			requiredScopes.add("storage");
+			requiredScopes.add("fdns.object");
+			requiredScopes.add("fdns.storage");
 			if (request.getString("format").equalsIgnoreCase("csv")) {
-				requiredScopes.add("combiner");
+				requiredScopes.add("fdns.combiner");
 			}
 			if (request.getString("format").equalsIgnoreCase("xlsx")) {
-				requiredScopes.add("combiner");
-				requiredScopes.add("msft-utils");
+				requiredScopes.add("fdns.combiner");
+				requiredScopes.add("fdns.msft-utils");
 			}
 
 			// We need the scope to use the index or object
 			if (request.getString("type").equalsIgnoreCase("object")) {
-				requiredScopes.add("object." + request.getString("database") + "." + request.getString("collection"));
+				requiredScopes.add("fdns.object." + request.getString("database") + "." + request.getString("collection") + ".read");
 			} else {
-				requiredScopes.add("indexing");
-				requiredScopes.add("indexing." + request.getString("index"));
+				requiredScopes.add("fdns.indexing");
+				requiredScopes.add("fdns.indexing." + request.getString("index") + ".read");
 			}
 
 			// check export scope
 			if (request.has("export") && request.getJSONObject("export").has("drawerName"))
 				if (request.getJSONObject("export").getString("drawerName").equalsIgnoreCase(username))
-					extraScopes.add("storage." + request.getJSONObject("export").getString("drawerName"));
+					extraScopes.add("fdns.storage." + request.getJSONObject("export").getString("drawerName") + ".create");
 				else
-					requiredScopes.add("storage." + request.getJSONObject("export").getString("drawerName"));
+					requiredScopes.add("fdns.storage." + request.getJSONObject("export").getString("drawerName") + ".create");
 
 			logger.debug("Required list of scopes: " + requiredScopes);
 			logger.debug("Available list of scopes: " + oAuth2Authentication.getOAuth2Request().getScope());
